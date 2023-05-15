@@ -31,16 +31,22 @@ for i in range(numTest):
 # In[]:# visualization the reconstructed images, output in var X_reconstructed_mu
 n = 10
 for j in range(1):
-    plt.figure(figsize=(12, 2))    
+    plt.figure(figsize=(12, 3))    
     for i in range(n):
         # display original images
-        ax = plt.subplot(2, n, i +j*n*2 + 1)
+        ax = plt.subplot(3, n, i +j*n*2 + 1)
         plt.imshow(np.rot90(np.fliplr(X_test[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         # display reconstructed images
-        ax = plt.subplot(2, n, i + n + j*n*2 + 1)
-        plt.imshow(np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
+        ax = plt.subplot(3, n, i + n + j*n*2 + 1)
+        recons=np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution )))
+        plt.imshow(recons,cmap='hot')
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        # display denoising images
+        ax = plt.subplot(3, n, i + n +n+ j*n*2 + 1)
+        plt.imshow(recons,cmap='hot')
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
     plt.show()
