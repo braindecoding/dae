@@ -2,6 +2,8 @@ from tensorflow import keras
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
+import math
+from ssim import calculate_ssim
 
 # In[]: load model
 with open('dgmm.pkl','rb') as f:  # Python 3: open(..., 'rb')
@@ -35,6 +37,12 @@ for i in range(numTest):
 
 # In[]:# visualization the reconstructed images, output in var X_reconstructed_mu
 n = 10
+mse1=0
+mse2=0
+psnr1=0
+psnr2=0
+ssim1=0
+ssim2=0
 #inputcmap = 'hot'
 inputcmap=plt.cm.binary
 for j in range(1):
@@ -42,7 +50,8 @@ for j in range(1):
     for i in range(n):
         # display original images
         ax = plt.subplot(3, n, i +j*n*2 + 1)
-        plt.imshow(np.rot90(np.fliplr(X_test[i+j*n].reshape(resolution ,resolution ))),cmap=inputcmap)
+        stim=np.rot90(np.fliplr(X_test[i+j*n].reshape(resolution ,resolution )))
+        plt.imshow(stim,cmap=inputcmap)
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         # display reconstructed images
@@ -59,4 +68,19 @@ for j in range(1):
         plt.imshow(fig,cmap=inputcmap)
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
+        # Hitung MSE
+        msedgmm=np.square(np.subtract(stim,recons)).mean()
+        psnrdgmm=20 * math.log10(1.0 / math.sqrt(msedgmm))
+        ssimdgmm=calculate_ssim(stim, recons)
+        msedae=np.square(np.subtract(stim,fig)).mean()
+        psnrdae=20 * math.log10(1.0 / math.sqrt(msedae))
+        ssimdae=calculate_ssim(stim, fig)
+        mse1=mse1+msedgmm
+        mse2=mse2+msedae
+        psnr1=psnr1+psnrdgmm
+        psnr2=psnr2+psnrdae
+        ssim1=ssim1+ssimdgmm
+        ssim2=ssim2+ssimdae
+        print("mse",i,msedgmm,msedae, psnrdgmm,psnrdae,ssimdgmm,ssimdae)
+    print("mse akhir : ",mse1/10,mse2/10,psnr1/10,psnr2/10,ssim1/10,ssim2/10)
     plt.show()
