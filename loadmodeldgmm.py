@@ -7,6 +7,10 @@ import numpy as np
 with open('dgmm.pkl','rb') as f:  # Python 3: open(..., 'rb')
     numTest, img_chns, img_rows, img_cols,H_mu,D2,sigma_h,gamma_mu,C,S,B_mu,rho,K,Y_test,Z_mu,L,resolution,X_test = pickle.load(f)
 imagereconstruct = keras.models.load_model('dgmmmodel.h5')
+print("load model selesai")
+
+denoising = keras.models.load_model('mnistaedenoising.h5')
+
 
 # In[]: reconstruct X (image) from Y (fmri)
 X_reconstructed_mu = np.zeros((numTest, img_chns, img_rows, img_cols))
@@ -40,13 +44,16 @@ for j in range(1):
         ax.get_yaxis().set_visible(False)
         # display reconstructed images
         ax = plt.subplot(3, n, i + n + j*n*2 + 1)
-        recons=np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution )))
+        recons=np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution )))#28x28
         plt.imshow(recons,cmap='hot')
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         # display denoising images
         ax = plt.subplot(3, n, i + n +n+ j*n*2 + 1)
-        plt.imshow(recons,cmap='hot')
+        inputres=recons.reshape(1,28,28,1)
+        res=denoising.predict(inputres)
+        fig=res.reshape(1,28,28)[0]
+        plt.imshow(fig,cmap='hot')
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
     plt.show()

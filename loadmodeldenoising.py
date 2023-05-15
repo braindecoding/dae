@@ -26,6 +26,8 @@ for i in range(10,19):
         plt.title('Denoised Images', fontsize = 25, color = 'Blue') 
     
     plt.subplot(9,9,i)
-    res=model.predict(test_noisy_images[i].reshape(1,28,28,1))
-    plt.imshow(res.reshape(1,28,28)[0], cmap = plt.cm.binary) 
+    inputres=test_noisy_images[i].reshape(1,28,28,1)
+    res=model.predict(inputres)
+    fig=res.reshape(1,28,28)[0]
+    plt.imshow(fig, cmap = plt.cm.binary) 
 plt.show()
